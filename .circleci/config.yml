@@ -1,0 +1,30 @@
+version: 2
+jobs:
+  build:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: "docker-compose up on background"
+          command: "docker-compose up --build -d"
+      # todo ENV file
+      # - run:
+      #     name: "
+  # deploy:
+  #   machine: true
+  #   steps:
+  #     - checkout
+  #     - run:
+        
+
+# workflows:
+#   version: 2
+#   build_deploy:
+#     jobs:
+#       - build
+#       - deploy:
+#           requires:
+#             - build
+#           filters:
+#             branches:
+#               only: main

@@ -1,0 +1,10 @@
+-- mysql -u${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}"
+DROP TABLE IF EXISTS task;
+-- CREATE TABLE IF NOT EXISTS task (
+CREATE TABLE task (
+    id INT(10) AUTO_INCREMENT NOT NULL primary key,
+    title VARCHAR(50) NOT NULL,
+    userId INT(10)
+);
+
+INSERT INTO task VALUES ('task1', '14');
