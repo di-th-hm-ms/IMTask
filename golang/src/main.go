@@ -2,20 +2,29 @@ package main
 
 import (
 	// "fmt"
-	// "log"
+	"log"
 	"time"
-	// "net/http"
+	"net/http"
 	// "os"
 	// "database/sql"
 	"github.com/gin-gonic/gin"
 	// "github.com/go-sql-driver/mysql"
 	"github.com/gin-contrib/cors"
 	"IMTask/golang/src/controller"
+	// "IMTask/golang/src/handler"
 )
 
 func main() {
+	// DB
+	controller.InitDB()
+	defer controller.CloseDB()
+
+	//ws handle
+	// http.HandleFunc("/ws", handler.New().Handle)
 
 	engine := gin.Default()
+	// middleware
+	// engine.Use()
 
 	// cors before routing
 	engine.Use(cors.New(cors.Config{
@@ -45,10 +54,13 @@ func main() {
 		taskEngine := v1.Group("/tasks")
 		{
 			taskEngine.GET("/list", controller.GetTasks)
-			// taskEngine.POST("/add", controller.AddTask)
-			// taskEngine.POST("/update", controller.UpdateTask)
-			// taskEngine.POST("/delete", controller.DeleteTask)
+			taskEngine.POST("/add", controller.AddTask)
+			taskEngine.POST("/update", controller.UpdateTask)
+			taskEngine.POST("/delete", controller.DeleteTask)
 		}
+	}
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Fatal(err)
 	}
 	engine.Run(":8080")
 }
