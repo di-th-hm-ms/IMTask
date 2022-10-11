@@ -11,7 +11,7 @@ import (
 	// "github.com/go-sql-driver/mysql"
 	"github.com/gin-contrib/cors"
 	"IMTask/golang/src/controller"
-	// "IMTask/golang/src/handler"
+	"IMTask/golang/src/handler"
 )
 
 func main() {
@@ -20,7 +20,13 @@ func main() {
 	defer controller.CloseDB()
 
 	//ws handle
-	// http.HandleFunc("/ws", handler.New().Handle)
+	// mux := http.
+	go func() {
+		http.HandleFunc("/ws", handler.New().Handle)
+		if err := http.ListenAndServe(":8081", nil); err != nil {
+			log.Printf("ws error: %s", err)
+		}
+	}()
 
 	engine := gin.Default()
 	// middleware
@@ -58,9 +64,14 @@ func main() {
 			taskEngine.POST("/update", controller.UpdateTask)
 			taskEngine.POST("/delete", controller.DeleteTask)
 		}
-	}
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		log.Fatal(err)
+		userEngine := v1.Group("/users")
+		{
+			userEngine.POST("/", controller.GetUser) // TODO specific user
+			userEngine.GET("/list", controller.GetUsers)
+			userEngine.POST("/add", controller.AddUser)
+			userEngine.POST("/update", controller.UpdateUser)
+			userEngine.POST("/delete", controller.DeleteUser)
+		}
 	}
 	engine.Run(":8080")
 }

@@ -20,6 +20,7 @@ services:
       - MYSQL_DATABASE
     ports:
       - 8080:8080
+      - 8081:8081
     tty: true
     volumes:
       - type: bind
