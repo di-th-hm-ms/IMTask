@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"fmt"
-	// "log"
 	"net/http"
 	// "database/sql"
 	// "os"
@@ -16,13 +14,22 @@ import (
 
 var UserService service.UserService = service.UserService{}
 
+// DEBUG
 func GetUsers(c *gin.Context) {
-	var users []model.User = UserServiceIns.GetUsersFromDB(DB)
+	users, serverErr := UserServiceIns.GetUsersFromDB(DB)
+	if serverErr != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"Status": serverErr.Status,
+			"Value": serverErr.Msg,
+		})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{
-		"message": "ok",
-		"data": users,
+		"Status": SUCCESS,
+		"Value": users,
 	})
 }
+
 func GetUser(c *gin.Context) {
 	type UserAuth struct {
 		Id string
@@ -35,11 +42,17 @@ func GetUser(c *gin.Context) {
 			"Value": err.Error(),
 		})
 	}
-	var user = UserServiceIns.GetUserFromDB(userAuth.Id, userAuth.Password, DB)
-	c.JSON(http.StatusOK, gin.H{
-		"message": "ok",
-		"data": user,
-	})
+	if user, serverError := UserServiceIns.GetUserFromDB(userAuth.Id, userAuth.Password, DB); serverError != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"Status": serverError.Status,
+			"Value": serverError.Msg,
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"Status": SUCCESS,
+			"data": user,
+		})
+	}
 }
 
 func AddUser(c *gin.Context) {
@@ -58,26 +71,16 @@ func AddUser(c *gin.Context) {
 			"Status": SUCCESS,
 			"Value": user,
 		})
-	} else if err.Error() == "400" {
-		// email error
-
-		// TODO password error
-		// req error
-		c.JSON(http.StatusBadRequest, gin.H{
-			"Status": BAD_REQUEST,
-			"Value": "parameter error",
-		})
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Status": BAD_REQUEST,
-			"Value": err.Error(),
+			"Status": err.Status,
+			"Value": err.Msg,
 		})
 	}
 
 
 }
 
-// TODO JWT開封後一致後
 func UpdateUser(c *gin.Context) {
 	userReq := model.NewUserReq()
 	if err := c.ShouldBindJSON(userReq); err != nil {
@@ -88,10 +91,10 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	if err := UserServiceIns.UpdateUserOnDB(userReq, DB); err != nil {
+	if err := UserServiceIns.UpdateUsernameOnDB(userReq, DB); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Status": BAD_REQUEST,
-			"Value": err.Error(),
+			"Status": err.Status,
+			"Value": err.Msg,
 		})
 		return
 	}
@@ -113,8 +116,8 @@ func DeleteUser(c *gin.Context) {
 
 	if err := UserServiceIns.DeleteUserFromDB(userReq, DB); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Status": BAD_REQUEST,
-			"Value": err.Error(),
+			"Status": err.Status,
+			"Value": err.Msg,
 		})
 		return
 	}

@@ -13,6 +13,7 @@ import (
 
 var DBSettingServiceIns service.DBSettingService = service.DBSettingService{}
 var TaskServiceIns service.TaskService = service.TaskService{}
+var UserServiceIns service.UserService = service.UserService{}
 
 type JsonReq struct {
 	Id			int64 `json:"field_id"`
@@ -31,6 +32,8 @@ func InitDB() {
 	DB = <- ch
 	TaskServiceIns.DropTaskTable(DB)
 	TaskServiceIns.CreateTaskTable(DB)
+	UserServiceIns.DropUserTable(DB)
+	UserServiceIns.CreateUserTable(DB)
 }
 func CloseDB() {
 	DBSettingServiceIns.CloseConnection(DB)
