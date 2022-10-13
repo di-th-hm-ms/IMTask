@@ -25,23 +25,17 @@ func (d DBSettingService) ConnectDB(driver string, path string, count int, ch ch
 	if err != nil {
 		log.Fatal("open error: ", err)
 	} else {
-		// CreateDB(db)
-		fmt.Println("0.5")
-		// ch <- db
 		if res, err := db.Query("SHOW DATABASES;"); err != nil{
 			log.Fatal("show error: ", err)
 		} else {
 			var database string
 			for res.Next() {
 				res.Scan(&database)
-				fmt.Println(database)
 			}
 		}
 		if _, err := db.Query("USE " + os.Getenv("MYSQL_DATABASE") + ";"); err != nil {
 			log.Fatal("use error: ", err)
 		}
-		fmt.Println("1")
-		// ch <- db
 	}
 
 	// Error occurs if ping() is exe before starting a container and launch the server

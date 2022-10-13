@@ -5,7 +5,8 @@ WORKDIR /go/src
 
 # COPY . .
 
-# RUN go get "github.com/gin-gonic/gin"
-# RUN go get "github.com/go-sql-driver/mysql"
+RUN go install github.com/cosmtrek/air@v1.40.0
+# RUN air -c .air.toml
 
-CMD ["go", "run", "main.go"]
+# CMD ["go", "run", "main.go"]
+CMD ["air", "-c", ".air.toml"]
