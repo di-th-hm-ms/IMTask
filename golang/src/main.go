@@ -21,8 +21,10 @@ func main() {
 
 	//ws handle
 	// mux := http.
+	pageHub := handler.NewHub()
+	go pageHub.Loop()
 	go func() {
-		http.HandleFunc("/ws", handler.New().Handle)
+		http.HandleFunc("/ws", handler.New(pageHub).Handle)
 		if err := http.ListenAndServe(":8081", nil); err != nil {
 			log.Printf("ws error: %s", err)
 		}
@@ -66,10 +68,13 @@ func main() {
 		}
 		userEngine := v1.Group("/users")
 		{
-			userEngine.POST("/", controller.GetUser) // TODO specific user
+			userEngine.POST("/login", controller.Login)
+			userEngine.POST("/signup", controller.AddUser)
+			userEngine.POST("/", controller.GetUser)
+			// TODO specific user
 			userEngine.GET("/list", controller.GetUsers)
 			userEngine.POST("/add", controller.AddUser)
-			userEngine.POST("/update", controller.UpdateUser)
+			userEngine.POST("/update-un", controller.UpdateUsername)
 			userEngine.POST("/delete", controller.DeleteUser)
 		}
 	}
