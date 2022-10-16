@@ -8,14 +8,15 @@ jobs:
           name: "docker-compose up on background"
           command: "docker-compose up --build -d"
       # todo ENV file
-      # - run:
-      #     name: "
+      - run:
+          name: "go test"
+          command: "cd golang/src/model && go test"
   # deploy:
   #   machine: true
   #   steps:
   #     - checkout
   #     - run:
-        
+
 
 # workflows:
 #   version: 2
