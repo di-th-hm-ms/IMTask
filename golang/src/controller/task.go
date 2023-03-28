@@ -22,8 +22,6 @@ type JsonReq struct {
 	UserId 		string `json:"field_userId"`
 }
 
-const SUCCESS = 200
-const BAD_REQUEST = 400
 
 var DB *sql.DB
 func InitDB() {
@@ -55,7 +53,7 @@ func AddTask(c *gin.Context) {
 	var jsonReq JsonReq
 	if err := c.ShouldBindJSON(&jsonReq); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Status": BAD_REQUEST,
+			"Status": model.BAD_REQUEST,
 			"Value": err.Error(),
 		})
 		return
@@ -64,7 +62,7 @@ func AddTask(c *gin.Context) {
 	task := TaskServiceIns.InsertTaskIntoDB(jsonReq.Title, jsonReq.IsAchieved, jsonReq.UserId, DB)
 
 	c.JSON(http.StatusOK, gin.H{
-		"Status": SUCCESS,
+		"Status": model.SUCCESS,
 		"Value": task,
 	})
 }
@@ -73,7 +71,7 @@ func UpdateTask(c *gin.Context) {
 	var jsonReq JsonReq
 	if err := c.ShouldBindJSON(&jsonReq); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Status": BAD_REQUEST,
+			"Status": model.BAD_REQUEST,
 			"Value": err.Error(),
 		})
 		return
@@ -84,14 +82,14 @@ func UpdateTask(c *gin.Context) {
 		// c.AbortWithStatus(400)
 		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Status": BAD_REQUEST,
+			"Status": model.BAD_REQUEST,
 			"Value": err.Error(),
 		})
 		return
 	}
 	task := model.Task{Id: jsonReq.Id, Title: jsonReq.Title, IsAchieved: jsonReq.IsAchieved, UserId: jsonReq.UserId}
 	c.JSON(http.StatusOK, gin.H{
-		"Status": SUCCESS,
+		"Status": model.SUCCESS,
 		"Value": task,
 	})
 }
@@ -107,12 +105,12 @@ func DeleteTask(c *gin.Context) {
 	if task, err := TaskServiceIns.DeleteTaskFromDB(jsonReq.Id, jsonReq.UserId, DB); task == nil {
 		// c.AbortWithStatus(204)
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Status": BAD_REQUEST,
+			"Status": model.BAD_REQUEST,
 			"Value": err.Error(),
 		})
 	} else {
 		c.JSON(http.StatusOK, gin.H{
-			"Status": SUCCESS,
+			"Status": model.SUCCESS,
 			"Value": task,
 		})
 	}

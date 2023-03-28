@@ -61,7 +61,9 @@ func main() {
 	{
 		taskEngine := v1.Group("/tasks")
 		{
-			taskEngine.GET("/list", controller.GetTasks)
+			// handler.JwtMiddleWare.
+			taskEngine.GET("/list", handler.VerifyJWT(&gin.Context, controller.GetTasks))
+
 			taskEngine.POST("/add", controller.AddTask)
 			taskEngine.POST("/update", controller.UpdateTask)
 			taskEngine.POST("/delete", controller.DeleteTask)
@@ -73,7 +75,8 @@ func main() {
 			userEngine.POST("/", controller.GetUser)
 			// TODO specific user
 			userEngine.GET("/list", controller.GetUsers)
-			userEngine.POST("/add", controller.AddUser)
+			// userEngine.POST("/add", controller.AddUser)
+			// middleware check
 			userEngine.POST("/update-un", controller.UpdateUsername)
 			userEngine.POST("/delete", controller.DeleteUser)
 		}

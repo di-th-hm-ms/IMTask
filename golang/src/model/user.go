@@ -18,6 +18,11 @@ type UserReq struct {
 	Password 	string `json:"f_password"`
 	CreatedAt	string `json:"f_created_at"`
 }
+type UserContent struct {
+	Email		string `json:"email"`
+	Username	string `json:"username"`
+	Password	string `json:"password"`
+}
 
 func (u *User) Bind(userReq *UserReq) {
 	u.Id = userReq.Id
@@ -32,6 +37,9 @@ func NewUser() *User {
 }
 func NewUserReq() *UserReq {
 	return &UserReq{}
+}
+func NewUserContent() *UserContent{
+	return &UserContent{}
 }
 
 func NewFromUserReq(userReq *UserReq) *User {
